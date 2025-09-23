@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .hamburger {
+        font-size: 32px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="title">HELLO WORLD</h1>
+    <button onclick="changeTitle()">Ganti Title</button>
+
+    <div id="icon" class="hamburger" onclick="changeIcon()">=</div>
+
+    <script>
+      function changeTitle() {
+        const title = document.getElementById("title");
+        title.innerText = "TITLE CHANGED";
+        title.style.color = "red";
+      }
+
+      function changeIcon() {
+        const icon = document.getElementById("icon");
+        if (icon.innerText === "=") {
+          icon.innerText = "x";
+        } else {
+          icon.innerText = "=";
+        }
+      }
+    </script>
+  </body>
+</html>

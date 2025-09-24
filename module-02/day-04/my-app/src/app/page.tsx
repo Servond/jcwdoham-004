@@ -11,6 +11,11 @@ interface ITask {
 
 export default function Home() {
   const [tasks, setTasks] = useState<ITask[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [sortFilter, setSortFilter] = useState<"DESC" | "ASC">("DESC");
+  const [statusFilter, setStatusFilter] = useState<
+    "ALL" | "ACTIVE" | "COMPLETE"
+  >("ALL");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { theme, setTheme } = useTheme();
 
@@ -83,35 +88,98 @@ export default function Home() {
           />
           <button onClick={addNewTask}>Submit</button>
         </div>
-        <div className="flex flex-col bg-white dark:bg-[#25273D] rounded-[5px] shadow-[0px_35px_50px_-15px_rgba(194,195,214,0.5)] dark:shadow-[0px_35px_50px_-15px_rgba(0,0,0,0.5)]  text-[#393A4B] dark:text-[#C8CBE7]">
-          {tasks.map((task: ITask) => (
-            <div
-              key={task.id}
-              className="flex lg:py-[20px] lg:px-[24px] lg:gap-[24px] border-b border-[#E3E4F1] dark:border-[#393A4B]"
-            >
+        <div className="flex flex-col  bg-white dark:bg-[#25273D] rounded-[5px] shadow-[0px_35px_50px_-15px_rgba(194,195,214,0.5)] dark:shadow-[0px_35px_50px_-15px_rgba(0,0,0,0.5)]  text-[#393A4B] dark:text-[#C8CBE7]">
+          <div className="flex p-5 justify-between">
+            <div className="flex flex-col gap-2">
+              <label>Search</label>
               <input
-                type="checkbox"
-                onChange={() => onComplete(task)}
-                checked={task.isComplete}
+                className="border border-white p-1 rounded-sm"
+                type="text"
+                onChange={(e) => setSearch(e.currentTarget.value)}
               />
-              <span
-                className={`w-[400px] ${
-                  task.isComplete
-                    ? "line-through text-[#D1D2DA] dark:text-[#4D5067]"
-                    : ""
-                }`}
-              >
-                {task.name}
-              </span>
-              <button onClick={() => onDelete(task)}>x</button>
             </div>
-          ))}
+            <div className="flex flex-col gap-2">
+              <label>Sort</label>
+              <select
+                className="border border-white p-1 rounded-sm"
+                defaultValue={"DESC"}
+                onChange={(e) =>
+                  setSortFilter(e.currentTarget.value as "ASC" | "DESC")
+                }
+              >
+                <option value="DESC">desc</option>
+                <option value="ASC">asc</option>
+              </select>
+            </div>
+          </div>
+          {tasks
+            .filter((t) => {
+              if (t.name.includes(search)) {
+                if (statusFilter === "ALL") {
+                  return true;
+                } else if (statusFilter === "ACTIVE" && !t.isComplete) {
+                  return true;
+                } else if (statusFilter === "COMPLETE" && t.isComplete) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }
+            })
+            .sort((a, b) =>
+              sortFilter === "DESC"
+                ? b.createdAt.getTime() - a.createdAt.getTime()
+                : a.createdAt.getTime() - b.createdAt.getTime()
+            )
+            .map((task: ITask) => (
+              <div
+                key={task.id}
+                className="flex lg:py-[20px] lg:px-[24px] lg:gap-[24px] border-b border-[#E3E4F1] dark:border-[#393A4B]"
+              >
+                <input
+                  type="checkbox"
+                  onChange={() => onComplete(task)}
+                  checked={task.isComplete}
+                />
+                <span
+                  className={`w-[400px] ${
+                    task.isComplete
+                      ? "line-through text-[#D1D2DA] dark:text-[#4D5067]"
+                      : ""
+                  }`}
+                >
+                  {task.name}
+                </span>
+                <button onClick={() => onDelete(task)}>x</button>
+              </div>
+            ))}
           <div className="flex justify-between lg:py-[20px] lg:px-[24px] lg:text-[14px] lg:tracking-[-0.19px] text-[#9495A5] dark:text-[#5B5E7E]">
             <span>{tasks.filter((t) => !t.isComplete).length} items left</span>
             <div className="flex gap-[19px]">
-              <span className="hover:cursor-pointer text-[#3A7CFD]">All</span>
-              <span className="hover:cursor-pointer">Active</span>
-              <span className="hover:cursor-pointer">Complete</span>
+              <span
+                onClick={() => setStatusFilter("ALL")}
+                className={`hover:cursor-pointer ${
+                  statusFilter === "ALL" ? "text-[#3A7CFD]" : ""
+                }`}
+              >
+                All
+              </span>
+              <span
+                onClick={() => setStatusFilter("ACTIVE")}
+                className={`hover:cursor-pointer ${
+                  statusFilter === "ACTIVE" ? "text-[#3A7CFD]" : ""
+                }`}
+              >
+                Active
+              </span>
+              <span
+                onClick={() => setStatusFilter("COMPLETE")}
+                className={`hover:cursor-pointer ${
+                  statusFilter === "COMPLETE" ? "text-[#3A7CFD]" : ""
+                }`}
+              >
+                Complete
+              </span>
             </div>
             <span>Clear Completed</span>
           </div>

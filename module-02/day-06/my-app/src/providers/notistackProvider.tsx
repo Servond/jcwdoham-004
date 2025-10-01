@@ -11,7 +11,7 @@ export default function NotistackProvider({
     <SnackbarProvider
       maxSnack={2}
       transitionDuration={300}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
     >
       {children}
     </SnackbarProvider>

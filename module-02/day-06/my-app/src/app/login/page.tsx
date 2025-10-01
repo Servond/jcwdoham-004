@@ -4,6 +4,8 @@ import { Formik, Form, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 
+import { useAuthStore } from "@/stores/authStore";
+
 interface ILogin {
   email: string;
   password: string;
@@ -21,10 +23,11 @@ const LoginSchema = Yup.object({
 });
 
 export default function Login() {
+  const { login } = useAuthStore();
   const { enqueueSnackbar } = useSnackbar();
   const initialValues: ILogin = { email: "", password: "" };
 
-  const login = async (values: ILogin) => {
+  const loginHandler = async (values: ILogin) => {
     try {
       const req = await fetch(
         `https://evidentbeginner-us.backendless.app/api/data/user?where=email%3D'${values.email}'%20and%20password%3D'${values.password}'`
@@ -33,6 +36,7 @@ export default function Login() {
       const res = await req.json();
 
       if (res.length > 0) {
+        login(values.email);
         enqueueSnackbar("Login Success", { variant: "success" });
       } else {
         enqueueSnackbar("Login Failed", { variant: "error" });
@@ -52,7 +56,7 @@ export default function Login() {
       <Formik<ILogin>
         initialValues={initialValues}
         validationSchema={LoginSchema}
-        onSubmit={(values) => login(values)}
+        onSubmit={(values) => loginHandler(values)}
       >
         {(formik: FormikProps<ILogin>) => {
           return (

@@ -1,12 +1,15 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
+import Link from "next/link";
+
+import { getAll, create } from "@/services/backendless.service";
 
 interface ITask {
-  id: number;
-  name: string;
+  objectId: string;
+  taskName: string;
   isComplete: boolean;
-  createdAt: Date;
+  created: number;
 }
 
 export default function Home() {
@@ -19,35 +22,66 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { theme, setTheme } = useTheme();
 
-  const addNewTask = () => {
-    if (inputRef.current?.value) {
-      const lastId = tasks[tasks.length - 1]?.id || 0;
+  const refreshData = async () => {
+    try {
+      const data = await getAll();
 
-      setTasks([
-        ...tasks,
-        {
-          id: lastId + 1,
-          name: inputRef.current.value,
-          isComplete: false,
-          createdAt: new Date(),
-        },
-      ]);
+      setTasks(data);
+    } catch (err: any) {
+      alert(err.message);
     }
   };
 
-  const onComplete = (task: ITask) => {
-    const newTasks = tasks.map((t) =>
-      t.id === task.id ? { ...t, isComplete: !t.isComplete } : t
-    );
+  const addNewTask = async () => {
+    try {
+      if (inputRef.current?.value) {
+        await create({ isComplete: false, taskName: inputRef.current.value });
+        alert("task berhasil diinput");
 
-    setTasks(newTasks);
+        refreshData();
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
-  const onDelete = (task: ITask) => {
-    const newTasks = tasks.filter((t) => t.id !== task.id);
+  const onComplete = async (task: ITask) => {
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKENDLESS_URL}/${task.objectId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            isComplete: !task.isComplete,
+            taskName: task.taskName,
+          }),
+        }
+      );
 
-    setTasks(newTasks);
+      refreshData();
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
+
+  const onDelete = async (task: ITask) => {
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKENDLESS_URL}/${task.objectId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      refreshData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  useEffect(() => {
+    refreshData();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center mx-auto mt-[80px] font-jose ">
@@ -114,7 +148,7 @@ export default function Home() {
           </div>
           {tasks
             .filter((t) => {
-              if (t.name.includes(search)) {
+              if (t.taskName.includes(search)) {
                 if (statusFilter === "ALL") {
                   return true;
                 } else if (statusFilter === "ACTIVE" && !t.isComplete) {
@@ -128,12 +162,12 @@ export default function Home() {
             })
             .sort((a, b) =>
               sortFilter === "DESC"
-                ? b.createdAt.getTime() - a.createdAt.getTime()
-                : a.createdAt.getTime() - b.createdAt.getTime()
+                ? b.created - a.created
+                : a.created - b.created
             )
             .map((task: ITask) => (
               <div
-                key={task.id}
+                key={task.objectId}
                 className="flex lg:py-[20px] lg:px-[24px] lg:gap-[24px] border-b border-[#E3E4F1] dark:border-[#393A4B]"
               >
                 <input
@@ -141,21 +175,23 @@ export default function Home() {
                   onChange={() => onComplete(task)}
                   checked={task.isComplete}
                 />
-                <span
+                <Link
                   className={`w-[400px] ${
                     task.isComplete
                       ? "line-through text-[#D1D2DA] dark:text-[#4D5067]"
                       : ""
                   }`}
+                  href={`/task-detail/${task.objectId}`}
                 >
-                  {task.name}
-                </span>
+                  <span>{task.taskName}</span>
+                </Link>
+
                 <button onClick={() => onDelete(task)}>x</button>
               </div>
             ))}
           <div className="flex justify-between lg:py-[20px] lg:px-[24px] lg:text-[14px] lg:tracking-[-0.19px] text-[#9495A5] dark:text-[#5B5E7E]">
             <span>{tasks.filter((t) => !t.isComplete).length} items left</span>
-            <div className="flex gap-[19px]">
+            <div className="md:flex gap-[19px] hidden">
               <span
                 onClick={() => setStatusFilter("ALL")}
                 className={`hover:cursor-pointer ${
@@ -183,6 +219,32 @@ export default function Home() {
             </div>
             <span>Clear Completed</span>
           </div>
+        </div>
+        <div className="md:hidden gap-[19px] flex justify-center mt-12">
+          <span
+            onClick={() => setStatusFilter("ALL")}
+            className={`hover:cursor-pointer ${
+              statusFilter === "ALL" ? "text-[#3A7CFD]" : ""
+            }`}
+          >
+            All
+          </span>
+          <span
+            onClick={() => setStatusFilter("ACTIVE")}
+            className={`hover:cursor-pointer ${
+              statusFilter === "ACTIVE" ? "text-[#3A7CFD]" : ""
+            }`}
+          >
+            Active
+          </span>
+          <span
+            onClick={() => setStatusFilter("COMPLETE")}
+            className={`hover:cursor-pointer ${
+              statusFilter === "COMPLETE" ? "text-[#3A7CFD]" : ""
+            }`}
+          >
+            Complete
+          </span>
         </div>
       </div>
     </div>

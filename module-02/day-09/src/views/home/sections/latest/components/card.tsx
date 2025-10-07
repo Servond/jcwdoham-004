@@ -10,6 +10,7 @@ export default function LatestSectionCard(props: Partial<IArticle>) {
       />
       <div className="space-y-2 py-2">
         <span className="h-4 w-[250px] text-2xl">{props.title}</span>
+        <span className="h-3 w-[250px]">{props.email}</span>
         <span className="h-12 w-[250px] line-clamp-3 text-xs text-gray-500">
           {props.description}
         </span>

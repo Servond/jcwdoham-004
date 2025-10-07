@@ -53,6 +53,7 @@ export default function LatestSection() {
                 <CarouselItem key={idx} className="md:basis-1/4 basis">
                   <LatestSectionCard
                     title={article.title}
+                    email={article.email}
                     slug={article.slug}
                     image_path={article.image_path}
                     description={article.description}

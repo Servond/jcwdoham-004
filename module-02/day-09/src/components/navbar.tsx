@@ -2,15 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
 import useAuthStore from "@/stores/authStore";
 
 export default function Navbar() {
@@ -26,15 +18,6 @@ export default function Navbar() {
         <Link href={"articles"} className="hover:text-green-500">
           Articles
         </Link>
-        {/* <Dialog>
-          <DialogTrigger>Open</DialogTrigger>
-          <DialogContent>
-            <VisuallyHidden>
-              <DialogTitle></DialogTitle>
-            </VisuallyHidden>
-            <div>test</div>
-          </DialogContent>
-        </Dialog> */}
 
         <Link
           href={isLoggedIn ? "/dashboard" : "/login"}

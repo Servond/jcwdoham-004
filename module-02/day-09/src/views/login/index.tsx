@@ -53,7 +53,7 @@ export default function LoginView() {
               <label>Email</label>
               <input
                 className="border border-black rounded-md p-3 w-96"
-                type="email"
+                type="text"
                 name="email"
                 value={props.values.email}
                 onChange={props.handleChange}

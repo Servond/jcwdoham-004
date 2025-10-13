@@ -1,5 +1,6 @@
 import PageWrapper from "@/components/pageWrapper";
 import Sidebar from "@/components/sidebar";
+import AdminGuardProvider from "@/providers/adminGuardProvider";
 
 export default function DashboardLayout({
   children,
@@ -8,8 +9,10 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex">
-      <Sidebar />
-      <PageWrapper>{children}</PageWrapper>
+      <AdminGuardProvider>
+        <Sidebar />
+        <PageWrapper>{children}</PageWrapper>
+      </AdminGuardProvider>
     </div>
   );
 }

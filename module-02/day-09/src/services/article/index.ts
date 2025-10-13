@@ -38,6 +38,18 @@ export async function getArticleByEmail(email: string): Promise<IArticle[]> {
   }
 }
 
+export async function getArticleBySlug(slug: string): Promise<IArticle[]> {
+  try {
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKENDLESS_URL}/article?where=slug%3D'${slug}'`
+    );
+
+    return data[0];
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function createArticle(
   params: Partial<IArticle>
 ): Promise<IArticle[]> {

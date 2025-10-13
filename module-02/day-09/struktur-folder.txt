@@ -1,6 +1,10 @@
 folder src/app
 - digunakan untuk routing page, dan memanggil view components
 
+folder src/views
+- digunakan untuk menyimpan component berdasarkan pages di src/app
+- component ini merupakan component utama html page2 tersebut
+
 folder src/components
 - digunakan untuk file component yang kira2 akan digunakan di banyak tempat (global component)
 
@@ -8,9 +12,6 @@ folder src/serviecs
 - digunakan untuk menyimpan file berdasarkan resource table
 - dimana fungsi di file tersebut adalah yang melakukan network call / komunikasi dengan applikasi Lain
 
-folder src/views
-- digunakan untuk menyimpan component berdasarkan pages di src/app
-- component ini merupakan component utama html page2 tersebut
 
 folder src/stores
 - digunakan untuk menyimpan auth state management stores

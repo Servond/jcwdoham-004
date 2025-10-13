@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import {
@@ -50,15 +51,17 @@ export default function LatestSection() {
           <Carousel className="w-full">
             <CarouselContent>
               {articles.map((article, idx) => (
-                <CarouselItem key={idx} className="md:basis-1/4 basis">
-                  <LatestSectionCard
-                    title={article.title}
-                    email={article.email}
-                    slug={article.slug}
-                    image_path={article.image_path}
-                    description={article.description}
-                  />
-                </CarouselItem>
+                <Link key={idx} href={`/${article.slug}`}>
+                  <CarouselItem className="md:basis-1/4 basis">
+                    <LatestSectionCard
+                      title={article.title}
+                      email={article.email}
+                      slug={article.slug}
+                      image_path={article.image_path}
+                      description={article.description}
+                    />
+                  </CarouselItem>
+                </Link>
               ))}
             </CarouselContent>
             <CarouselPrevious />

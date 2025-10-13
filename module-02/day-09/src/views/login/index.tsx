@@ -30,7 +30,7 @@ export default function LoginView() {
             const res = await login(values);
 
             if (res.length > 0) {
-              onLogin(res[0].email);
+              onLogin(res[0].email, res[0].role);
               enqueueSnackbar("Login Success", { variant: "success" });
 
               router.push("/");

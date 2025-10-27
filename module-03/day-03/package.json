@@ -1,0 +1,29 @@
+{
+  "name": "day-02",
+  "version": "1.0.0",
+  "main": "./src/main.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node ./dist/main.js",
+    "dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.7.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/pg": "^8.15.5",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2"
+  }
+}

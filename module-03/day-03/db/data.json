@@ -1,0 +1,12 @@
+{
+  "expense": [
+    {
+      "id": 1,
+      "nominal": 50000,
+      "type": "expense",
+      "title": "gofood",
+      "date": "2025-10-20T15:00:00.000Z",
+      "category": "food"
+    }
+  ]
+}

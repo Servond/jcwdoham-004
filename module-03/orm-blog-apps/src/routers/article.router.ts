@@ -7,15 +7,17 @@ import {
 } from "../controllers/article.controller";
 
 import { authMiddleware, roleGuard } from "../middlewares/auth.middleware";
+import { uploader } from "../utils/uploader";
 
 const articleRouter = Router();
 
-articleRouter.get("/", authMiddleware, getAllArticleController);
+articleRouter.get("/", getAllArticleController);
 articleRouter.get("/:id", getArticleByIdController);
 articleRouter.post(
   "/",
   authMiddleware,
   roleGuard(["ADMIN"]),
+  uploader("memory", "ART", "articles").single("image"),
   createArticleController
 );
 // articleRouter.patch("/:id");

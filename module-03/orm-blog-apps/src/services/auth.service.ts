@@ -6,7 +6,7 @@ import prisma from "../lib/prisma";
 import { createCustomError } from "../utils/customError";
 import { SECRET_KEY } from "../configs/env.config";
 
-async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string) {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -15,6 +15,30 @@ async function getUserByEmail(email: string) {
     });
 
     return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function refreshToken(email: string) {
+  try {
+    const user = await getUserByEmail(email);
+
+    if (!user) throw createCustomError(401, "Invalid email");
+
+    const payload = {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
+
+    const accessToken = sign(payload, SECRET_KEY, { expiresIn: "10m" });
+    const refreshToken = sign(payload, SECRET_KEY, { expiresIn: "30d" });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   } catch (err) {
     throw err;
   }
@@ -37,11 +61,12 @@ export async function login(email: string, password: string) {
       role: user.role,
     };
 
-    const token = sign(payload, SECRET_KEY, { expiresIn: "1h" });
+    const accessToken = sign(payload, SECRET_KEY, { expiresIn: "10m" });
+    const refreshToken = sign(payload, SECRET_KEY, { expiresIn: "30d" });
 
     return {
-      user: payload,
-      token,
+      accessToken,
+      refreshToken,
     };
   } catch (err) {
     throw err;

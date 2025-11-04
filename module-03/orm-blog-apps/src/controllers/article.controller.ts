@@ -5,6 +5,7 @@ import {
   createArticle,
   getArticleById,
 } from "../services/article.service";
+import { Token } from "../middlewares/auth.middleware";
 
 export async function getArticleByIdController(
   req: Request,
@@ -12,7 +13,6 @@ export async function getArticleByIdController(
   next: NextFunction
 ) {
   try {
-    const user = req.user;
     const { id } = req.params;
     const data = await getArticleById(Number(id));
 
@@ -55,18 +55,20 @@ export async function createArticleController(
   next: NextFunction
 ) {
   try {
-    const { title, description, content, cover_img } = req.body;
+    const user = req.user as Token;
+    const { title, description, content } = req.body;
+    const image = req.file as Express.Multer.File;
 
     const slug = title
       .toLowerCase()
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
 
-    const data = await createArticle({
+    const data = await createArticle(user.email, image, {
       title,
       description,
       content,
-      cover_img,
+      cover_img: image.filename,
       slug,
     });
 
